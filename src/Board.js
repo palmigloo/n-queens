@@ -214,15 +214,17 @@
 
     hasMajorDiagonalConflictAt: function (majorDiagonalColumnIndexAtFirstRow) {
       var row = 0;
+      var sumRight = 0;
+      var sumLeft = 0;
       var col = majorDiagonalColumnIndexAtFirstRow;
       var allRows = this.rows();
-      while(!this._isInBounds(row, col)){
-        sum += allRows[row][col];
+      while(this._isInBounds(row, col)){
+        sumRight += allRows[row][col];
+        sumLeft += allRows[col][row];
         col += 1;
         row += 1;
       }
-
-      return sum > 1;
+      return sumLeft > 1 || sumRight > 1;
     },
 
 
@@ -252,14 +254,7 @@
       //console.log(n);
       let allRows = this.get();
       for (let i = 0; i < n; i++) {
-        if(this.allRows[i].hasMajorDiagonalConflictAt(0)) {
-          return true;
-        }
-      }
-
-      let firstRow = this.get(0);
-      for (var i = 0; i < firstRow.length; i++) {
-        if (this.hasMajorDiagonalConflictAt(i)) {
+        if(this.hasMajorDiagonalConflictAt(i)) {
           return true;
         }
       }
@@ -272,13 +267,41 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
+
+    //strategy: same thing as major diagonal, just starting to at the end of the row and decrement
+    //and for column we start then end of each rown, and increment the column.
+
+    //pseudocode:
+
+
     hasMinorDiagonalConflictAt: function (minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      let n = this.get('n');
+      var row = 0;
+      var sumLeft = 0;
+      var sumDown = 0;
+      var col = minorDiagonalColumnIndexAtFirstRow;
+      var allRows = this.rows();
+      while(this._isInBounds(row, col)){
+        sumLeft += allRows[row][col];
+        sumDown += allRows[n - col + 1][n-1];
+        col -= 1;
+        row += 1
+      }
+//augemneted matrices
+      return sumLeft > 1 || sumRight > 1;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function () {
-      return false; // fixme
+      let n = this.get('n');
+      //console.log(n);
+      let allRows = this.get();
+      for (let i = n-1; i < 0; i--) {
+        if(this.hasMinorDiagonalConflictAt(i)) {
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
