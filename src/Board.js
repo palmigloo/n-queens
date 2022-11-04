@@ -2,6 +2,8 @@
 // It's part of the Board Visualizer
 // The only portions you need to work on are the helper functions (below)
 
+
+
 (function () {
 
   window.Board = Backbone.Model.extend({
@@ -60,7 +62,6 @@
       );
     },
 
-
     /*
              _             _     _
          ___| |_ __ _ _ __| |_  | |__   ___ _ __ ___ _
@@ -77,6 +78,7 @@
     // --------------------------------------------------------------
     //
     // test if a specific row on this board contains a conflict
+
 
     //Input: rowIndex (number)
     //Output: boolean, if conflict in row
@@ -105,6 +107,7 @@
 
 
     // test if any rows on this board contain conflicts
+
     // input : none
     // output : boolean (true -> conflict, false -> no)
     // constraints: none
@@ -132,10 +135,12 @@
     },
 
 
+
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
+
 
     // input : colIndex (number)
     // output : boolean (check specific column has conflict)
@@ -155,13 +160,10 @@
     hasColConflictAt: function (colIndex) {
       var allRows = this.rows();
       var sum = 0
-
       for (var i = 0; i < allRows.length; i++) {
         sum += allRows[i][colIndex];
       }
-
       return sum > 1;
-
     },
 
     // test if any columns on this board contain conflicts
@@ -183,7 +185,7 @@
 
     hasAnyColConflicts: function () {
       let n = this.get('n');
-      console.log(n);
+      //console.log(n);
       for (let i = 0; i < n; i++) {
         if (this.hasColConflictAt(i)) {
           return true;
@@ -194,10 +196,12 @@
 
 
 
+
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
+
 
     // input : index of starting point of major diagonal
     // output : boolean (check if conflict exists on major diagonal , yes -> return true)
@@ -227,8 +231,27 @@
       return sumLeft > 1 || sumRight > 1;
     },
 
+    hasMajorDiagonalConflictAt2: function(majorDiagonalColumnIndexAtFirstRow) {
+
+  var size = this.get('n');
+  var count = 0;
+  var rowIdx = 0;
+  var colIdx = majorDiagonalColumnIndexAtFirstRow;
+
+  for ( ; rowIdx < size && colIdx < size; rowIdx++, colIdx++ ) {
+    if ( colIdx >= 0 ) {
+      var row = this.get(rowIdx);
+      count += row[colIdx];
+    }
+  }
+
+  return count > 1;
+      },
+
+
 
     // test if any major diagonals on this board contain conflicts
+
 
     // input : none
     // output : boolean (true -> conflict, false -> no)
@@ -263,10 +286,12 @@
 
 
 
+
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
+
 
     //strategy: same thing as major diagonal, just starting to at the end of the row and decrement
     //and for column we start then end of each rown, and increment the column.
@@ -274,35 +299,65 @@
     //pseudocode:
 
 
-    hasMinorDiagonalConflictAt: function (minorDiagonalColumnIndexAtFirstRow) {
-      let n = this.get('n');
-      var row = 0;
-      var sumLeft = 0;
-      var sumDown = 0;
-      var col = minorDiagonalColumnIndexAtFirstRow;
-      var allRows = this.rows();
-      while(this._isInBounds(row, col)){
-        sumLeft += allRows[row][col];
-        sumDown += allRows[n - col + 1][n-1];
-        col -= 1;
-        row += 1
+//     hasMinorDiagonalConflictAt: function (minorDiagonalColumnIndexAtFirstRow) {
+//       let n = this.get('n');
+//       var row = 0;
+//       var sumLeft = 0;
+//       var col = minorDiagonalColumnIndexAtFirstRow;
+//       var allRows = this.rows();
+//       while(this._isInBounds(row, col)){
+//         sumLeft += allRows[row][col];
+//         col -= 1;
+//         row += 1
+//       }
+// //augemneted matrices
+//       return sumLeft > 1;
+//     },
+
+//     // test if any minor diagonals on this board contain conflicts
+//     hasAnyMinorDiagonalConflicts: function () {
+//       let n = this.get('n');
+//       //console.log(n);
+//       let allRows = this.get();
+//       for (let i = (n*2)-1; i >= 0; i--) {
+//         if(this.hasMinorDiagonalConflictAt(i)) {
+//           return true;
+//         }
+//       }
+//       return false;
+//     },
+// =======
+    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+
+      var size = this.get('n');
+      var count = 0;
+      var rowIdx = 0;
+      var colIdx = minorDiagonalColumnIndexAtFirstRow;
+
+      for ( ; rowIdx < size && colIdx >= 0; rowIdx++, colIdx-- ) {
+        if ( colIdx < size ) {
+          var row = this.get(rowIdx);
+          count += row[colIdx];
+        }
       }
-//augemneted matrices
-      return sumLeft > 1 || sumRight > 1;
-    },
+
+      return count > 1;
+          },
 
     // test if any minor diagonals on this board contain conflicts
-    hasAnyMinorDiagonalConflicts: function () {
-      let n = this.get('n');
-      //console.log(n);
-      let allRows = this.get();
-      for (let i = n-1; i < 0; i--) {
-        if(this.hasMinorDiagonalConflictAt(i)) {
+    hasAnyMinorDiagonalConflicts: function() {
+
+      var size = this.get('n');
+
+      for ( var i = (size * 2) - 1; i >= 0; i-- ) {
+        if ( this.hasMinorDiagonalConflictAt(i) ) {
           return true;
         }
       }
+
       return false;
-    }
+          }
+// >>>>>>> bc8b2d3f2fd5bdd1265945d7a798ec8ad93f5c15
 
     /*--------------------  End of Helper Functions  ---------------------*/
 

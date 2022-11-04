@@ -1,3 +1,7 @@
+const Benchmark = require('benchmark');
+
+const suite = new Benchmark.Suite('My performance test');
+
 describe('Board', function() {
 
   describe('Empty board', function() {
@@ -8,6 +12,20 @@ describe('Board', function() {
       [0, 0, 0, 0]
     ];
     var board = new Board(matrix);
+
+    suite
+  .add('Our solution', () => {
+    const processed = board.hasMajorDiagonalConflictAt(3);
+  })
+  .add('Their solution', () => {
+    const processed = board.hasMajorDiagonalConflictAt2(3);
+  })
+  .on('complete', event => {
+    const suite = event.currentTarget;
+    const fastestOption = suite.filter('fastest').map('name');
+    console.log(`The fastest option is ${fastestOption}`)
+  })
+  .run();
 
     it('should not find a row conflict', function() {
       expect(board.hasAnyRowConflicts()).to.be.equal(false);
